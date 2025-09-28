@@ -1,103 +1,166 @@
-import Image from "next/image";
+'use client';
+
+import { useState, useEffect } from 'react';
+import { MapPin, Calendar, Users, ArrowLeft } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import Link from 'next/link';
 
 export default function Home() {
-  return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.js
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [upcomingEvents, setUpcomingEvents] = useState([]);
+  const [eventsLoading, setEventsLoading] = useState(true);
+  const { user } = useAuth();
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  useEffect(() => {
+    fetchUpcomingEvents();
+  }, []);
+
+  const fetchUpcomingEvents = async () => {
+    try {
+      const response = await fetch('/api/events?limit=3');
+      const data = await response.json();
+      
+      if (data.success) {
+        setUpcomingEvents(data.events);
+      }
+    } catch (error) {
+      console.error('Fetch events error:', error);
+    } finally {
+      setEventsLoading(false);
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Hero Section */}
+      <div className="px-4 py-6 text-center">
+        <h2 className="text-2xl sm:text-3xl font-bold mb-4 text-foreground">
+          به دنیای دویدن
+          <span className="text-primary"> بپیوندید</span>
+        </h2>
+        <p className="text-base text-muted-foreground mb-6 leading-relaxed">
+          در رویدادهای دویدن شهری شرکت کنید و تجربه‌ای فراموش‌نشدنی داشته باشید
+        </p>
+      </div>
+
+      {/* Features */}
+      <div className="px-4">
+        <div className="grid gap-4 mb-6">
+          <div className="bg-card rounded-lg p-4 shadow-sm border border-border">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="bg-primary/10 p-2 rounded-lg">
+                <MapPin className="h-5 w-5 text-primary" />
+              </div>
+              <h3 className="text-lg font-semibold text-card-foreground">مکان‌یابی دقیق</h3>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              موقعیت دقیق رویدادها را روی نقشه مشاهده کنید
+            </p>
+          </div>
+
+          <div className="bg-card rounded-lg p-4 shadow-sm border border-border">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="bg-accent/10 p-2 rounded-lg">
+                <Calendar className="h-5 w-5 text-accent" />
+              </div>
+              <h3 className="text-lg font-semibold text-card-foreground">ثبت نام آسان</h3>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              با چند کلیک ساده در رویدادهای مورد علاقه خود ثبت نام کنید
+            </p>
+          </div>
+
+          <div className="bg-card rounded-lg p-4 shadow-sm border border-border">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="bg-secondary/10 p-2 rounded-lg">
+                <Users className="h-5 w-5 text-secondary" />
+              </div>
+              <h3 className="text-lg font-semibold text-card-foreground">جامعه دوندگان</h3>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              با دوندگان دیگر ارتباط برقرار کنید و تجربیات خود را به اشتراک بگذارید
+            </p>
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      </div>
+
+      {/* Upcoming Events Preview */}
+      <div className="px-4">
+        <div className="bg-card rounded-lg shadow-sm p-4 border border-border">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-xl font-bold text-card-foreground">
+              رویدادهای پیش رو
+            </h3>
+            <Link 
+              href="/events"
+              className="text-primary hover:text-primary/80 flex items-center gap-1 text-sm font-medium"
+            >
+              مشاهده همه
+              <ArrowLeft className="h-4 w-4" />
+            </Link>
+          </div>
+          
+          {eventsLoading ? (
+            <div className="space-y-3">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="animate-pulse">
+                  <div className="h-4 bg-muted rounded w-3/4 mb-2"></div>
+                  <div className="h-3 bg-muted rounded w-1/2 mb-2"></div>
+                  <div className="h-3 bg-muted rounded w-2/3"></div>
+                </div>
+              ))}
+            </div>
+          ) : upcomingEvents.length === 0 ? (
+            <div className="text-center py-8">
+              <div className="bg-muted rounded-full p-3 w-12 h-12 mx-auto mb-3">
+                <Calendar className="h-6 w-6 text-muted-foreground mx-auto" />
+              </div>
+              <p className="text-sm text-muted-foreground mb-4">هنوز رویدادی تعریف نشده است</p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {upcomingEvents.map((event) => (
+                <div key={event.id} className="border border-border rounded-lg p-3 hover:bg-muted/30 transition-colors">
+                  <div className="flex justify-between items-start mb-2">
+                    <h4 className="font-semibold text-card-foreground text-sm">{event.title}</h4>
+                    <span className="text-xs text-muted-foreground">
+                      {event.price === 0 ? 'رایگان' : `${event.price.toLocaleString('fa-IR')} تومان`}
+                    </span>
+                  </div>
+                  <div className="flex items-center text-xs text-muted-foreground mb-1">
+                    <Calendar className="h-3 w-3 ml-1" />
+                    <span>{new Date(event.startDateTime).toLocaleDateString('fa-IR')}</span>
+                  </div>
+                  <div className="flex items-center text-xs text-muted-foreground mb-2">
+                    <MapPin className="h-3 w-3 ml-1" />
+                    <span className="line-clamp-1">{event.address}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center text-xs text-muted-foreground">
+                      <Users className="h-3 w-3 ml-1" />
+                      <span>{event.registeredCount} نفر ثبت نام کرده</span>
+                    </div>
+                    <Link 
+                      href="/events"
+                      className="text-primary hover:text-primary/80 text-xs font-medium"
+                    >
+                      جزئیات
+                    </Link>
+                  </div>
+                </div>
+              ))}
+              <div className="text-center pt-3">
+                <Link 
+                  href="/events"
+                  className="bg-primary text-primary-foreground px-4 py-2 rounded-lg hover:opacity-90 transition-opacity inline-flex items-center gap-2 text-sm"
+                >
+                  مشاهده همه رویدادها
+                  <ArrowLeft className="h-4 w-4" />
+                </Link>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }

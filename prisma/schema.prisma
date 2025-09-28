@@ -1,0 +1,112 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  phone     String   @unique
+  firstName String?
+  lastName  String?
+  isAdmin   Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  otpCodes      OtpCode[]
+  registrations EventRegistration[]
+
+  @@map("users")
+}
+
+model OtpCode {
+  id        Int      @id @default(autoincrement())
+  phone     String
+  code      String
+  expiresAt DateTime
+  verified  Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  // Relations
+  user   User?   @relation(fields: [userId], references: [id])
+  userId Int?
+
+  @@map("otp_codes")
+}
+
+model Event {
+  id              Int      @id @default(autoincrement())
+  title           String
+  description     String?
+  address         String
+  latitude        Float
+  longitude       Float
+  startDateTime   DateTime
+  endDateTime     DateTime
+  registrationEnd DateTime
+  maxParticipants Int?
+  price           Float    @default(0)
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  registrations EventRegistration[]
+
+  @@map("events")
+}
+
+model EventRegistration {
+  id           Int                      @id @default(autoincrement())
+  userId       Int
+  eventId      Int
+  status       EventRegistrationStatus @default(PENDING)
+  registeredAt DateTime                @default(now())
+  updatedAt    DateTime                @updatedAt
+
+  // Relations
+  user    User  @relation(fields: [userId], references: [id])
+  event   Event @relation(fields: [eventId], references: [id])
+  payment Payment?
+
+  @@unique([userId, eventId])
+  @@map("event_registrations")
+}
+
+model Payment {
+  id             Int           @id @default(autoincrement())
+  registrationId Int           @unique
+  amount         Float
+  status         PaymentStatus @default(PENDING)
+  paymentMethod  String?
+  transactionId  String?
+  gatewayResponse String?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  // Relations
+  registration EventRegistration @relation(fields: [registrationId], references: [id])
+
+  @@map("payments")
+}
+
+enum EventRegistrationStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}

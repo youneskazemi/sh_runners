@@ -1,36 +1,120 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# دوندگان شهر - سامانه مدیریت رویدادهای دویدن
 
-## Getting Started
+یک PWA مدرن برای مدیریت و ثبت نام در رویدادهای دویدن شهری با پشتیبانی کامل از زبان فارسی و RTL.
 
-First, run the development server:
+## ویژگی‌های کلیدی
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- 🏃‍♂️ **مدیریت رویدادهای دویدن**: ایجاد، ویرایش و مدیریت رویدادها
+- 📱 **PWA**: قابلیت نصب روی موبایل و دسکتاپ
+- 🔐 **احراز هویت OTP**: ورود امن با کد تایید پیامکی
+- 🗺️ **نقشه تعاملی**: نمایش موقعیت رویدادها روی نقشه
+- ⏰ **ثبت نام زمان‌دار**: محدودیت زمانی برای ثبت نام
+- 💳 **پرداخت آنلاین**: پشتیبانی از درگاه‌های پرداخت
+- 🌙 **حالت تاریک**: پشتیبانی از تم روشن و تاریک
+- 🇮🇷 **فارسی و RTL**: طراحی کامل برای زبان فارسی
+
+## تکنولوژی‌های استفاده شده
+
+- **Frontend**: Next.js 15, React 19
+- **UI Components**: shadcn/ui, Radix UI
+- **Styling**: Tailwind CSS
+- **Database**: Prisma ORM + SQLite
+- **Authentication**: NextAuth.js
+- **Maps**: React Leaflet
+- **PWA**: next-pwa
+- **SMS**: Twilio
+- **Forms**: React Hook Form + Zod
+
+## نصب و راه‌اندازی
+
+### پیش‌نیازها
+
+- Node.js 18+ 
+- npm یا yarn
+
+### مراحل نصب
+
+1. **کلون کردن پروژه**
+   ```bash
+   git clone <repository-url>
+   cd sh_runners
+   ```
+
+2. **نصب وابستگی‌ها**
+   ```bash
+   npm install
+   ```
+
+3. **تنظیم متغیرهای محیطی**
+   
+   فایل `.env.local` را ایجاد کنید:
+   ```env
+   DATABASE_URL="file:./dev.db"
+   NEXTAUTH_SECRET="your-secret-key-here"
+   NEXTAUTH_URL="http://localhost:3000"
+   TWILIO_ACCOUNT_SID="your-twilio-sid"
+   TWILIO_AUTH_TOKEN="your-twilio-token"
+   TWILIO_PHONE_NUMBER="your-twilio-phone"
+   ```
+
+4. **راه‌اندازی دیتابیس**
+   ```bash
+   npx prisma generate
+   npx prisma db push
+   ```
+
+5. **اجرای پروژه**
+   ```bash
+   npm run dev
+   ```
+
+6. **مشاهده در مرورگر**
+   
+   [http://localhost:3000](http://localhost:3000) را باز کنید
+
+## ساختار پروژه
+
+```
+src/
+├── app/                 # App Router (Next.js 13+)
+│   ├── layout.js       # Layout اصلی
+│   ├── page.js         # صفحه اصلی
+│   └── globals.css     # استایل‌های سراسری
+├── components/         # کامپوننت‌های React
+│   ├── ui/            # کامپوننت‌های shadcn/ui
+│   └── AuthModal.js   # مودال احراز هویت
+├── lib/               # توابع کمکی
+│   └── utils.js       # ابزارهای عمومی
+└── types/             # تعریف انواع TypeScript
+
+prisma/
+└── schema.prisma      # اسکیمای دیتابیس
+
+public/
+├── manifest.json      # تنظیمات PWA
+└── icons/            # آیکون‌های PWA
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## API Routes
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+- `POST /api/auth/send-otp` - ارسال کد تایید
+- `POST /api/auth/verify-otp` - تایید کد
+- `GET /api/events` - دریافت لیست رویدادها
+- `POST /api/events` - ایجاد رویداد جدید
+- `POST /api/events/[id]/register` - ثبت نام در رویداد
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## مشارکت در پروژه
 
-## Learn More
+1. Fork کنید
+2. برنچ جدید بسازید (`git checkout -b feature/amazing-feature`)
+3. تغییرات را commit کنید (`git commit -m 'Add amazing feature'`)
+4. Push کنید (`git push origin feature/amazing-feature`)
+5. Pull Request ایجاد کنید
 
-To learn more about Next.js, take a look at the following resources:
+## مجوز
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+این پروژه تحت مجوز MIT منتشر شده است.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## پشتیبانی
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+برای گزارش باگ یا درخواست ویژگی جدید، لطفاً issue ایجاد کنید.
